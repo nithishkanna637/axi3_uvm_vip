@@ -1,9 +1,10 @@
 
+
 class axi_magent extends uvm_agent;
 axi_sequencer sqr;
 axi_dri dri;
 axi_coverage cov;
- mast_mon mon;
+mast_mon mon;
 `uvm_component_utils(axi_magent)
 `NEW_COMP
 function void build_phase(uvm_phase phase);
