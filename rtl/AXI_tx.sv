@@ -42,15 +42,18 @@ constraint wrap_con{
 
 constraint burst_type_con{
    burst_type != RSVD_BT;
-   soft burst_type == WRAP;
+  // soft burst_type == INCR;
    }
 
-constraint burst_len_con{
-     burst_len<16;
-	 soft burst_len == 4;
+/*constraint burst_len_con{
+   soft burst_len == 3;
 		 }
-
-constraint burst_size_con{
+*/
+/* constraint burst_size_con{
     soft burst_size == 2;
 	}
+*/
+constraint address{
+  addr inside {[`addr_width'h0000_0000 : `addr_width'hFFFF_FFFF]};
+    }
 endclass
