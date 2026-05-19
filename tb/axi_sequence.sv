@@ -9,20 +9,20 @@ class axi_wr_rd extends axi_sequence;
   axi_tx tx;
   axi_tx txq[$];  
  task body();
-   repeat(`N0_OF_TX) begin
-   	`uvm_do_with(req,{req.wr_rd==1'b1;req.addr==32'd92;})
+   repeat(`NO_OF_TX) begin
+   	`uvm_do_with(req,{req.wr_rd==1'b1;})
      tx=new req;
 	 txq.push_back(tx);
      req.print();
    end
-   repeat(`N0_OF_TX) begin
+   repeat(`NO_OF_TX) begin
       tx=txq.pop_front();
       `uvm_do_with(req,{req.wr_rd==1'b0;
 	                    req.tx_id==tx.tx_id;
 	                    req.addr==tx.addr;
 						req.burst_len==tx.burst_len;
 						req.burst_size == tx.burst_size;
-+						req.burst_type == tx.burst_type;})
+                     	req.burst_type == tx.burst_type;})
 	  req.print();
 	   end
   endtask
@@ -34,7 +34,7 @@ class axi_wrap extends axi_sequence;
  axi_tx tx1;
  axi_tx txq1[$];
  task body();
-   repeat(`N0_OF_TX) begin
+   repeat(`NO_OF_TX) begin
      `uvm_do_with(req,{req.wr_rd==1;
 	                   req.burst_type==WRAP;
 					   req.addr==32'd92;
@@ -46,7 +46,7 @@ class axi_wrap extends axi_sequence;
 	  req.print();
      end
 	
-	 repeat(`N0_OF_TX) begin
+	 repeat(`NO_OF_TX) begin
 	   tx1=txq1.pop_front();
 	   `uvm_do_with(req,{req.wr_rd==1'b0;
 	                    req.tx_id==tx1.tx_id;
@@ -58,7 +58,86 @@ class axi_wrap extends axi_sequence;
  endtask
 endclass
 
+class axi_incr_burst extends axi_sequence;
+  `uvm_object_utils(axi_incr_burst)
+  `NEW_OBJ
+  axi_tx tx;
+  axi_tx txq[$];
+  task body();
+    repeat(`NO_OF_TX) begin
+      `uvm_do_with(req, {req.wr_rd     == 1'b1;
+                         req.burst_type == INCR;
+                         req.burst_len  inside {3,7,15};
+                         req.burst_size == 2;})
+      tx = new req;
+      txq.push_back(tx);
+      req.print();
+    end
+    repeat(`NO_OF_TX) begin
+      tx = txq.pop_front();
+      `uvm_do_with(req, {req.wr_rd     == 1'b0;
+                         req.tx_id     == tx.tx_id;
+                         req.addr      == tx.addr;
+                         req.burst_len  == tx.burst_len;
+                         req.burst_size == tx.burst_size;
+                         req.burst_type == tx.burst_type;})
+      req.print();
+    end
+  endtask
+endclass
 
+class axi_fixed_burst extends axi_sequence;
+  `uvm_object_utils(axi_fixed_burst)
+  `NEW_OBJ
+  axi_tx tx;
+  axi_tx txq[$];
+  task body();
+    repeat(`NO_OF_TX) begin
+      `uvm_do_with(req, {req.wr_rd     == 1'b1;
+                         req.burst_type == FIXED;
+                         req.burst_len  == 0;
+                         req.burst_size == 2;})
+      tx = new req;
+      txq.push_back(tx);
+      req.print();
+    end
+    repeat(`NO_OF_TX) begin
+      tx = txq.pop_front();
+      `uvm_do_with(req, {req.wr_rd     == 1'b0;
+                         req.tx_id     == tx.tx_id;
+                         req.addr      == tx.addr;
+                         req.burst_len  == tx.burst_len;
+                         req.burst_size == tx.burst_size;
+                         req.burst_type == tx.burst_type;})
+      req.print();
+    end
+  endtask
+endclass
 
-
-
+class axi_narrow_transfer extends axi_sequence;
+  `uvm_object_utils(axi_narrow_transfer)
+  `NEW_OBJ
+  axi_tx tx;
+  axi_tx txq[$];
+  task body();
+    repeat(`NO_OF_TX) begin
+      `uvm_do_with(req, {req.wr_rd     == 1'b1;
+                         req.burst_type == INCR;
+                         req.burst_size inside {0,1};
+                         req.burst_len  inside {3,7};})
+      tx = new req;
+      txq.push_back(tx);
+      req.print();
+    end
+    repeat(`NO_OF_TX) begin
+      tx = txq.pop_front();
+      `uvm_do_with(req, {req.wr_rd     == 1'b0;
+                         req.tx_id     == tx.tx_id;
+                         req.addr      == tx.addr;
+                         req.burst_len  == tx.burst_len;
+                         req.burst_size == tx.burst_size;
+                         req.burst_type == tx.burst_type;})
+      req.print();
+    end
+  endtask
+endclass
