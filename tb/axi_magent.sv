@@ -1,5 +1,4 @@
 
-
 class axi_magent extends uvm_agent;
 axi_sequencer sqr;
 axi_dri dri;
