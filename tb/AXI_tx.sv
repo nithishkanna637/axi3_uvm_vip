@@ -21,7 +21,7 @@ rand bit [`strb_width-1:0] strbq[$];
    `uvm_field_queue_int(strbq,UVM_ALL_ON)
  `uvm_object_utils_end
 
- `NEW_OBJ
+`NEW_OBJ
 constraint data_queue{
    (wr_rd==1) -> dataq.size()==burst_len+1;
    (wr_rd==0) -> dataq.size() ==0;
@@ -35,9 +35,18 @@ constraint strb_value_queue{
       soft strbq[i] == 4'hf;
 }
 }
+constraint burst_type_dist {
+  burst_type dist {
+    2'b00 := 10, 
+    2'b01 := 60, 
+    2'b10 := 30  
+  };
+}
 constraint wrap_con{
    (burst_type==WRAP) -> burst_len inside {1,3,7,15};
    (burst_type==WRAP) -> addr%(2**burst_size)==0;
+   (burst_type==WRAP) -> (addr%((2**burst_size)*(burst_len+1)))!=0;
+   (burst_type==WRAP) ->  addr!=0;
    }
 
 constraint burst_type_con{
@@ -53,7 +62,24 @@ constraint burst_type_con{
     soft burst_size == 2;
 	}
 */
-constraint address{
-  addr inside {[`addr_width'h0000_0000 : `addr_width'hFFFF_FFFF]};
-    }
+constraint address_dist {
+  addr dist {
+    32'h0000_0000                      := 100, // Very high weight for single value
+    [32'h0000_0001 : 32'h0000_FFFF]    :/ 100, // Range as a whole gets weight 100
+    [32'h0001_0000 : 32'hFFFE_FFFF]    :/ 50,  // REDUCE this weight significantly
+    [32'hFFFF_0000 : 32'hFFFF_FFFE]    :/ 100, // Range as a whole gets weight 100
+    32'hFFFF_FFFF                      := 100  // Very high weight for single value
+  };
+}
+constraint size{
+  burst_size dist{
+   0 :/ 100,
+   1 :/ 100,
+   2 :/ 100,
+   3 :/ 100,
+   4 :/ 100,
+   5 :/ 100,
+   6 :/ 100,
+   7 :/ 100 };
+   }
 endclass
