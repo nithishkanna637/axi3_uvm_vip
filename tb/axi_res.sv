@@ -77,8 +77,9 @@ class axi_res extends uvm_component;
 
           for (int k = 0; k < (2**awsize_t); k++) begin
             mem[awaddr_t + k] = vif.responder_cb.wdata[(k*8)+:8];
-           // `uvm_info("WRITE_ADDR",
-             // $sformatf("mem[%0d]=%h", awaddr_t+k, mem[awaddr_t+k]), UVM_LOW)
+          
+		 // `uvm_info("WRITE_ADDR",
+           //   $sformatf("mem[%0d]=%h", awaddr_t+k, mem[awaddr_t+k]), UVM_LOW)
           end
 
           case (awburst_t)
@@ -150,8 +151,8 @@ class axi_res extends uvm_component;
         vif.responder_cb.rlen  <= arlen_t;
         for (int j = 0; j < (2**arsize_t); j++) begin
           vif.responder_cb.rdata[(j*8)+:8] <= mem[araddr_t + j];
-          //`uvm_info("READ_ADDR",
-            //$sformatf("mem[%0d]=%h", araddr_t+j, mem[araddr_t+j]), UVM_LOW)
+         // `uvm_info("READ_ADDR",
+          //  $sformatf("mem[%0d]=%h", araddr_t+j, mem[araddr_t+j]), UVM_LOW)
         end
 
         do begin
