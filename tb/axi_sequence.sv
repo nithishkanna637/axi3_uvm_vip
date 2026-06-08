@@ -9,13 +9,20 @@ class axi_wr_rd extends axi_sequence;
   axi_tx tx;
   axi_tx txq[$];  
  task body();
-   repeat(`NO_OF_TX) begin
-   	`uvm_do_with(req,{req.wr_rd==1'b1;})
-     tx=new req;
-	 txq.push_back(tx);
-     req.print();
-   end
-   repeat(`NO_OF_TX) begin
+  bit [3:0] used_ids[int];  // associative array
+  bit [3:0] prev_id = 4'hf; // any initial value
+
+repeat(`NO_OF_TX) begin
+  tx = axi_tx::type_id::create("tx");
+  `uvm_do_with(tx, {
+    tx.wr_rd == 1'b1;
+    tx.tx_id != local::prev_id;  // only check previous
+  })
+  prev_id = tx.tx_id;  // store current as previous
+  txq.push_back(tx);
+end
+
+repeat(`NO_OF_TX) begin
       tx=txq.pop_front();
       `uvm_do_with(req,{req.wr_rd==1'b0;
 	                    req.tx_id==tx.tx_id;
