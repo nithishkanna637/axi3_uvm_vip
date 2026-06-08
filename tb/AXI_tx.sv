@@ -1,14 +1,15 @@
 typedef enum{FIXED=0,INCR,WRAP,RSVD_BT} burst_type_id;
 class axi_tx extends uvm_sequence_item; 
 rand bit wr_rd;
-rand bit [3:0] tx_id;
-rand bit [`addr_width-1:0] addr;
+randc bit [3:0] tx_id;
+randc bit [`addr_width-1:0] addr;
 rand bit [`data_width-1:0] dataq[$];
 rand bit [3:0] burst_len;
 rand bit [2:0] burst_size;
 rand burst_type_id burst_type;
 rand bit [1:0] respq[$];
 rand bit [`strb_width-1:0] strbq[$];
+ 
 `uvm_object_utils_begin(axi_tx)
    `uvm_field_int(wr_rd,UVM_ALL_ON)
    `uvm_field_int(tx_id,UVM_ALL_ON)
@@ -42,6 +43,7 @@ constraint burst_type_dist {
     2'b10 := 30  
   };
 }
+
 constraint wrap_con{
    (burst_type==WRAP) -> burst_len inside {1,3,7,15};
    (burst_type==WRAP) -> addr%(2**burst_size)==0;
@@ -58,10 +60,9 @@ constraint burst_type_con{
    soft burst_len == 3;
 		 }
 */
-/* constraint burst_size_con{
-    soft burst_size == 2;
+constraint burst_size_con{
+    burst_size == 2;
 	}
-*/
 constraint address_dist {
   addr dist {
     32'h0000_0000                      := 100, // Very high weight for single value
@@ -82,4 +83,8 @@ constraint size{
    6 :/ 100,
    7 :/ 100 };
    }
+
+constraint fourk{
+  ((addr % 4096) + (2**burst_size) * (burst_len + 1)) < 4092;
+  }
 endclass
