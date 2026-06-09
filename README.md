@@ -327,23 +327,19 @@ INCR/WRAP   → beat by beat comparison
 ╔══════════════════════════════════════════════════════╗
 ║           AXI SCOREBOARD FINAL REPORT                ║
 ╠══════════════════════════════════════════════════════╣
-║  Total Writes            : 50                        ║
-║  Total Reads             : 50                        ║
-║  Total Beats Verified    : 432                       ║
+║  Total Writes            : 100                       ║
+║  Total Reads             : 100                       ║
+║  Total Transactions      : 100                       ║
 ╠══════════════════════════════════════════════════════╣
-║  PASS                    : 50                        ║
+║  PASS                    : 100                       ║
 ║  FAIL                    : 0                         ║
+║  No Matching Write       : 0                         ║
+║  Response error          : 0                         ║
 ╠══════════════════════════════════════════════════════╣
-║  FIXED   PASS/FAIL : 6  / 0  | Beats : 54            ║
-║  INCR    PASS/FAIL : 38 / 0  | Beats : 342           ║
-║  WRAP    PASS/FAIL : 6  / 0  | Beats : 96            ║
+║  FIXED   PASS/FAIL     : 11  /0                      ║
+║  INCR    PASS/FAIL     : 87  /0                      ║
+║  WRAP    PASS/FAIL     : 2   /0                      ║
 ╚══════════════════════════════════════════════════════╝
-TEST PASSED — 50/50 transactions | 432/432 beats verified
-```
-
-> See full transaction log → `results/logs/all_burst.log`
-
----
 
 ## Coverage & Corner Cases
 
@@ -372,9 +368,9 @@ Coverage implemented as `uvm_subscriber` in `axi_cov.sv`.
 
 ### Coverage Result
 
-> See coverage screenshot → `results/coverage/functional_coverage.png`
+> See coverage screenshot → `results/functional_coverage.png`
 
-**Overall functional coverage: 97–98%**
+**Overall functional coverage: 96.66%
 
 The `4K_BOUNDARY_CHECK` coverpoint intentionally has one uncovered bin — `crosses_4k`. This bin is not hit because the driver constrains transactions to stay within 4KB boundaries. The responder does not yet handle split transactions across page boundaries. This is a **documented known gap** tracked for Phase 2.
 
@@ -423,7 +419,7 @@ Three assertions were identified as known limitations and removed:
 
 These are tracked as Phase 2 fixes — responder signal initialization sequence needs adjustment.
 
-> See assertion report screenshot → `results/assertions/assertion_report.png`
+> See assertion report screenshot → `results/assertion_report.png`
 
 ---
 
@@ -527,13 +523,12 @@ All sequences follow **write-first, read-back** pattern. Selected at runtime via
 
 | Result | Screenshot |
 |---|---|
-| Scoreboard Final Report | `results/scoreboard/scoreboard_report.png` |
-| Full Transaction Log | `results/logs/all_burst.log` |
-| Functional Coverage Report | `results/coverage/functional_coverage.png` |
-| Assertion Report | `results/assertions/assertion_report.png` |
-| Write Transaction Waveform | `results/waveforms/write_transaction.png` |
-| Read Transaction Waveform | `results/waveforms/read_transaction.png` |
-| Full Simulation Waveform | `results/waveforms/full_simulation.png` |
+| Scoreboard Final Report | `results/scoreboard.png` |
+| Functional Coverage Report | `results/functional_coverage.png` |
+| Assertion Report | `results/assertion_report.png` |
+| Write Transaction Waveform | `results/waveforms/write_waveform.png` |
+| Read Transaction Waveform | `results/waveforms/read_waveform.png` |
+| Full Simulation Waveform | `results/waveforms/write_read_waveform.png` |
 
 ---
 
