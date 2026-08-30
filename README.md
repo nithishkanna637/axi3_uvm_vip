@@ -644,5 +644,3 @@ coverage save wrap.ucdb
 *This project is actively under development. Each phase builds on the previous one toward a production-quality, fully self-checking AXI4 verification environment.*
 
 ---
-
-Is this structure and content correct for you? Confirm and I will generate the final file.
